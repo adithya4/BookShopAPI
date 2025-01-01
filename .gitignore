@@ -1,0 +1,11 @@
+#Django-related
+__pycache__/
+media/
+migrations/
+*.log
+#Environment Variables
+.env
+#VScode
+.vscode/
+#Virtual Environment
+venv/
