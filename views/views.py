@@ -3,12 +3,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.pagination import PageNumberPagination   
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from .models import Books, Collection
-from .serializers import BooksSerializer, CollectionSerializer
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet
+from .models import Books, Collection, Carts, CartItem
+from .serializers import BooksSerializer, CollectionSerializer, CartSerializer, CartItemSerializer
 from django.http import JsonResponse, HttpResponse
-
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, ListModelMixin
 # Create your views here.
 
 class BookViewSet(ModelViewSet):
@@ -38,3 +38,17 @@ def collection_list(request, id):
     #serializer = CollectionSerializer(queryset, many=True)
     return JsonResponse(book_dict)
     
+class CartItemViewSet(RetrieveModelMixin,
+                      ListModelMixin,
+                      GenericViewSet):
+    serializer_class = CartItemSerializer
+
+    def get_queryset(self):
+        return CartItem.objects.filter(cart_id = self.kwargs['cart_pk'])
+class CartViewSet(CreateModelMixin,
+                  RetrieveModelMixin,
+                  DestroyModelMixin,
+                  GenericViewSet):
+    queryset = Carts.objects.all()
+    serializer_class = CartSerializer
+
